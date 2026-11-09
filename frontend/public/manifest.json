@@ -1,7 +1,7 @@
 {
-  "name": "openGym",
-  "short_name": "openGym",
-  "description": "Personal gym & body weight tracker",
+  "name": "Aura Gym",
+  "short_name": "Aura Gym",
+  "description": "Aura Gym — Treine com inteligência e acompanhe sua evolução.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
