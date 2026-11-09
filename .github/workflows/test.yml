@@ -46,9 +46,10 @@ jobs:
       android: ${{ steps.f.outputs.android == 'true' || github.event_name == 'workflow_dispatch' }}
       catalogue: ${{ steps.f.outputs.catalogue == 'true' || github.event_name == 'workflow_dispatch' }}
     steps:
+      # Keep checkout credentials available: paths-filter must fetch the previous
+      # commit on push events to compare changed paths. Removing the token here makes
+      # private repositories fail with "could not read Username for https://github.com".
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
       - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: f
         with:
