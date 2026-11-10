@@ -30,6 +30,7 @@ import { DEFAULT_TEMPLATE_ID } from '../lib/structuralBalanceTemplates.js'
 
 import { WC_DEFAULT } from '../lib/workout-controls.js'
 import { sanitizeAccent } from '../lib/accent.js'
+import { readSafeState, backupStateBeforeWrite } from '../lib/state-migrations.js'
 import { registerExerciseAliases } from '../lib/exercise-aliases.js'
 
 const KEY = 'gym_state_v1'
@@ -348,15 +349,19 @@ export function restartedState(cur) {
 }
 
 function loadState() {
-  try {
-    const raw = localStorage.getItem(KEY)
-    if (raw) {
-      const saved = JSON.parse(raw)
-      const s = sanitizeAccent(Object.assign(clone(DEF), saved))
-      if (!saved.lang) s.lang = detectedLang()
-      return s
-    }
-  } catch (e) { /* ignore */ }
+  // A malformed WebView/browser copy is quarantined before trying the last known-good
+  // snapshot. The storage keys, account owner and sync metadata remain untouched.
+  const result = readSafeState(
+    typeof localStorage !== 'undefined' ? localStorage : null
+  )
+  if (result.state) {
+    const saved = result.state
+    const s = sanitizeAccent(Object.assign(clone(DEF), saved))
+    if (!saved.lang) s.lang = detectedLang()
+    return s
+  }
+  // Corrupt bytes remain in gym_state_v1.corrupt_backup for diagnostics/recovery.
+  // The native file mirror is still independently restored by boot() on mobile.
   return freshState()
 }
 
@@ -665,7 +670,9 @@ export const useStore = create((set, get) => {
       // The marker goes first: a tab that loads the copy in between gets an older base than the
       // copy's, which costs one merge at worst — never a newer one, which would lose data.
       saveMarker(base)
-      localStorage.setItem(KEY, stateJson(S))
+      const serialized = stateJson(S)
+      backupStateBeforeWrite(localStorage, serialized)
+      localStorage.setItem(KEY, serialized)
       localStorage.setItem(WID_OWNER_KEY, seenOwner || '')
       const wid = Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
       localStorage.setItem(WID_KEY, wid)
