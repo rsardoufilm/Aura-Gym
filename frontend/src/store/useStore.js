@@ -356,6 +356,9 @@ function loadState() {
   )
   if (result.state) {
     const saved = result.state
+    // Seed the recovery snapshot on the first successful load, not only after
+    // the next edit. This protects users who launch and then suffer a storage fault.
+    try { backupStateBeforeWrite(localStorage, stateJson(saved)) } catch { /* best effort */ }
     const s = sanitizeAccent(Object.assign(clone(DEF), saved))
     if (!saved.lang) s.lang = detectedLang()
     return s
