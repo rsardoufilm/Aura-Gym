@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:fatigue-probe": "node scripts/fatigue-monotonic-probe.mjs",
-    "pdf:check": "node scripts/pdf/render-samples.mjs --out pdf-samples --langs en,de,ar --paper A4,Letter --check"
+    "pdf:check": "node scripts/pdf/render-samples.mjs --out pdf-samples --langs en,de,ar --paper A4,Letter --check",
+    "icons:pwa": "node scripts/generate-pwa-icons.mjs"
   },
   "license": "AGPL-3.0-or-later",
   "dependencies": {
@@ -41,6 +42,7 @@
     "happy-dom": "^20.14.6",
     "linkedom": "^0.18.13",
     "vite": "^8.3.4",
-    "vitest": "^4.1.12"
+    "vitest": "^4.1.12",
+    "sharp": "^0.34.5"
   }
 }
