@@ -78,7 +78,7 @@ export default function Login() {
   }
   const head = <>
     <img
-      src="/icon-512.png"
+      src={`${import.meta.env.BASE_URL}icon-512.png`}
       alt="Logo oficial Aura Gym"
       width="112"
       height="112"
