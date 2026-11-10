@@ -77,8 +77,17 @@ export default function Login() {
     catch (e) { if (e.name !== 'NotAllowedError' && e.name !== 'AbortError') useUI.getState().toast(passkeyError(e, t('Sign-in failed'))) }
   }
   const head = <>
-    <div style={{ fontSize: 54, display: 'flex', justifyContent: 'center', color: 'var(--acc-ink)' }}><Icon name="dumbbell" /></div>
-    <h1 className="t-large" style={{ fontWeight: 700, margin: '10px 0 4px' }}>Aura Gym</h1>
+    <img
+      src="/icon-512.png"
+      alt="Logo oficial Aura Gym"
+      width="112"
+      height="112"
+      decoding="async"
+      fetchPriority="high"
+      style={{ display: 'block', width: 112, height: 112, objectFit: 'contain', margin: '0 auto 10px' }}
+      onError={event => { event.currentTarget.style.visibility = 'hidden' }}
+    />
+    <h1 className="t-large" style={{ fontWeight: 700, margin: '0 0 4px' }}>Aura Gym</h1>
   </>
   const wrap = { display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '78vh', textAlign: 'center' }
 
@@ -127,7 +136,12 @@ export default function Login() {
         // Without passkeys and without the guest entrance there is no way in from this browser,
         // so say that plainly instead of offering a local profile that cannot be created.
         : t("This browser doesn't support passkeys, and this instance requires an account. Try a browser or device with passkey support.")}</div>}
-      {canGuest && <Button variant="ghost" className="dim" onClick={() => setGuest(true)}>{t('Continue without account')}</Button>}
+      {canGuest && <>
+        <Button variant="ghost" className="dim" onClick={() => setGuest(true)}>{t('Continue without account')}</Button>
+        <div className="dim small" style={{ marginTop: 8, lineHeight: 1.5, textAlign: 'center' }}>
+          {t('Guest mode stores your workouts only in this browser. They are not linked to an account or synced automatically. Export a backup regularly.')}
+        </div>
+      </>}
       <div className="dim small" style={{ marginTop: 26, lineHeight: 1.5 }}>{pwOn ? t('Passkeys use {0}. A password works too, where passkeys do not.', bio()) : t('Passkeys use {0}. No passwords to remember.', bio())}<br />{t('Each profile keeps its own plan, workouts & body weight.')}</div>
     </div>
   )
