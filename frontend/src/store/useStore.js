@@ -674,8 +674,10 @@ export const useStore = create((set, get) => {
       // copy's, which costs one merge at worst — never a newer one, which would lose data.
       saveMarker(base)
       const serialized = stateJson(S)
-      backupStateBeforeWrite(localStorage, serialized)
       localStorage.setItem(KEY, serialized)
+      // Snapshot only after the primary write succeeds. A full/near-quota store
+      // must never sacrifice the current save to make room for its backup.
+      backupStateBeforeWrite(localStorage, serialized)
       localStorage.setItem(WID_OWNER_KEY, seenOwner || '')
       const wid = Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
       localStorage.setItem(WID_KEY, wid)
