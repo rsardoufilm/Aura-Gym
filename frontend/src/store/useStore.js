@@ -30,10 +30,10 @@ import { DEFAULT_TEMPLATE_ID } from '../lib/structuralBalanceTemplates.js'
 
 import { WC_DEFAULT } from '../lib/workout-controls.js'
 import { sanitizeAccent } from '../lib/accent.js'
-import { readSafeState, backupStateBeforeWrite } from '../lib/state-migrations.js'
+import { STATE_KEY, readSafeState, backupStateBeforeWrite } from '../lib/state-migrations.js'
 import { registerExerciseAliases } from '../lib/exercise-aliases.js'
 
-const KEY = 'gym_state_v1'
+const KEY = STATE_KEY
 // Where the saved copy stands with the server: the revision it descends from, and its own `_ts`
 // at that moment. `rev` goes back to the server as `baseRev` on every push, so a write over a
 // document this device never saw is refused (409) instead of dropping another device's work;
@@ -351,14 +351,14 @@ export function restartedState(cur) {
 function loadState() {
   // A malformed WebView/browser copy is quarantined before trying the last known-good
   // snapshot. The storage keys, account owner and sync metadata remain untouched.
-  const result = readSafeState(
-    typeof localStorage !== 'undefined' ? localStorage : null
-  )
+  let storage = null
+  try { storage = typeof localStorage !== 'undefined' ? localStorage : null } catch { /* storage blocked */ }
+  const result = readSafeState(storage)
   if (result.state) {
     const saved = result.state
     // Seed the recovery snapshot on the first successful load, not only after
     // the next edit. This protects users who launch and then suffer a storage fault.
-    try { backupStateBeforeWrite(localStorage, stateJson(saved)) } catch { /* best effort */ }
+    try { if (storage) backupStateBeforeWrite(storage, stateJson(saved)) } catch { /* best effort */ }
     const s = sanitizeAccent(Object.assign(clone(DEF), saved))
     if (!saved.lang) s.lang = detectedLang()
     return s
