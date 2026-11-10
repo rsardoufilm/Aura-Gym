@@ -13,12 +13,23 @@ import { draw } from './app-icons.mjs'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const OUTPUT = resolve(ROOT, 'public')
+const RESOURCES = resolve(ROOT, 'resources')
 const SIZES = [180, 512]
 const DEFAULT_ICON = APP_ICON_VARIANTS.find(icon => icon.id === 'default')
 
 async function main() {
   if (!DEFAULT_ICON) throw new Error('Default Aura Gym icon variant is missing')
   await mkdir(OUTPUT, { recursive: true })
+  await mkdir(RESOURCES, { recursive: true })
+
+  // Capacitor Assets expects a 1024px PNG at resources/icon.png. Generate it
+  // from the same vector and deterministic renderer used for the PWA outputs.
+  const nativeIcon = draw(DEFAULT_ICON, 1024)
+  if (!Buffer.isBuffer(nativeIcon) || nativeIcon.length < 100) {
+    throw new Error('Renderer returned an invalid 1024px native icon')
+  }
+  await writeFile(resolve(RESOURCES, 'icon.png'), nativeIcon)
+  console.log('[Aura Gym] Generated 1024x1024 native source: resources/icon.png')
 
   for (const size of SIZES) {
     const target = resolve(OUTPUT, `icon-${size}.png`)
