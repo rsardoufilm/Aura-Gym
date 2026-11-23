@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "aura-gym-aurapro",
+  "main": "cloudflare/worker.js",
+  "compatibility_date": "2026-11-23",
+  "workers_dev": true,
+  "preview_urls": true,
+  "routes": [
+    {
+      "pattern": "aurapro.uk/auragym*",
+      "zone_name": "aurapro.uk"
+    }
+  ],
+  "assets": {
+    "directory": "./frontend/dist",
+    "binding": "ASSETS",
+    "base_path": "/auragym",
+    "run_worker_first": [
+      "/auragym/api",
+      "/auragym/api/*"
+    ],
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
