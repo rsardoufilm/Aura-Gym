@@ -3,7 +3,7 @@
  * O BASE_URL suporta raiz, subdiretório e builds Capacitor.
  * O fallback evita imagem quebrada em caso de falha do asset oficial.
  */
-const LOGO_SRC = `${import.meta.env.BASE_URL}assets/aistudio/aura_gym_logo_circular_512_2c90e2c1.png`
+const LOGO_SRC = `${import.meta.env.BASE_URL}aura_gym_logo_circular_512.png`
 const FALLBACK_SRC = `${import.meta.env.BASE_URL}icon-512.png`
 
 export default function BrandLogo({ size = 48, alt = 'Aura Gym', className, style = {} }) {
