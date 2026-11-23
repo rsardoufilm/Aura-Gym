@@ -6,6 +6,8 @@ import { t } from '../lib/i18n.js'
 import { DEMO, REPO } from '../lib/demo.js'
 import { guestAllowed } from '../lib/guest.js'
 import { useState, useRef, useEffect } from 'react'
+import Icon from '../components/Icon.jsx'
+import BrandLogo from '../components/BrandLogo.jsx'
 import { Button, Segmented } from '../components/ui.jsx'
 import { askAddDeviceData } from '../sheets.jsx'
 import { passwordOn, PasswordRegisterForm, openPasswordSignIn } from '../components/PasswordAuth.jsx'
@@ -76,17 +78,10 @@ export default function Login() {
     catch (e) { if (e.name !== 'NotAllowedError' && e.name !== 'AbortError') useUI.getState().toast(passkeyError(e, t('Sign-in failed'))) }
   }
   const head = <>
-    <img
-      src={`${import.meta.env.BASE_URL}icon-512.png`}
-      alt="Logo oficial Aura Gym"
-      width="112"
-      height="112"
-      decoding="async"
-      fetchPriority="high"
-      style={{ display: 'block', width: 112, height: 112, objectFit: 'contain', margin: '0 auto 10px' }}
-      onError={event => { event.currentTarget.style.visibility = 'hidden' }}
-    />
-    <h1 className="t-large" style={{ fontWeight: 700, margin: '0 0 4px' }}>Aura Gym</h1>
+    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
+      <BrandLogo size={88} style={{ boxShadow: '0 6px 20px rgba(0,0,0,0.4)', border: '2px solid rgba(163,230,53,0.4)' }} />
+    </div>
+    <h1 className="t-large" style={{ fontWeight: 700, margin: '10px 0 4px' }}>Aura Gym</h1>
   </>
   const wrap = { display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '78vh', textAlign: 'center' }
 
@@ -135,12 +130,7 @@ export default function Login() {
         // Without passkeys and without the guest entrance there is no way in from this browser,
         // so say that plainly instead of offering a local profile that cannot be created.
         : t("This browser doesn't support passkeys, and this instance requires an account. Try a browser or device with passkey support.")}</div>}
-      {canGuest && <>
-        <Button variant="ghost" className="dim" onClick={() => setGuest(true)}>{t('Continue without account')}</Button>
-        <div className="dim small" style={{ marginTop: 8, lineHeight: 1.5, textAlign: 'center' }}>
-          {t('Guest mode stores your workouts only in this browser. They are not linked to an account or synced automatically. Export a backup regularly.')}
-        </div>
-      </>}
+      {canGuest && <Button variant="ghost" className="dim" onClick={() => setGuest(true)}>{t('Continue without account')}</Button>}
       <div className="dim small" style={{ marginTop: 26, lineHeight: 1.5 }}>{pwOn ? t('Passkeys use {0}. A password works too, where passkeys do not.', bio()) : t('Passkeys use {0}. No passwords to remember.', bio())}<br />{t('Each profile keeps its own plan, workouts & body weight.')}</div>
     </div>
   )
