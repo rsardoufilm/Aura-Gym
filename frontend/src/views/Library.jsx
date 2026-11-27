@@ -7,7 +7,7 @@ import { EXDB, BODYPARTS, allExercises, equipmentOf, byCategory, searchExercises
 import { MUSCLE_NAME } from '../lib/muscles.js'
 import { activeProfile, exAvailable } from '../lib/equipment.js'
 import { bestWeightFor } from '../lib/history.js'
-import { fmtNum, exCount } from '../lib/format.js'
+import { fmtNum } from '../lib/format.js'
 import { t, tn, exerciseNameFor, exerciseNameClass } from '../lib/i18n.js'
 import { Thumb } from '../components/Media.jsx'
 import { exerciseDetailSheet, addToRoutineSheet, customExSheet } from '../sheets.jsx'
@@ -137,7 +137,7 @@ export default function Library() {
           {q && <button type="button" className="aura-library-action" onClick={resetSearch} aria-label={t('Clear')}><Icon name="xmark" /></button>}
         </label>
         <button type="button" className={'aura-library-action' + (filtersOn ? ' is-active' : '')} onClick={openFilters}>
-          <Icon name="sliders-horizontal" /> {t('Filters')}{filtersOn ? ` · ${filtersOn}` : ''}
+          <Icon name="slider" /> {t('Filters')}{filtersOn ? ` · ${filtersOn}` : ''}
         </button>
       </div>
 
@@ -181,7 +181,7 @@ export default function Library() {
         {exercises.slice(0, shown).map(exerciseCard)}
         {exercises.length === 0 && similar.length === 0 && (
           <div className="aura-library-empty">
-            <Icon name="search-x" />
+            <Icon name="magnifier" />
             <p>{t('No match')}</p>
             {q && <button type="button" className="aura-library-action" onClick={resetSearch}>{t('Clear search')}</button>}
           </div>
