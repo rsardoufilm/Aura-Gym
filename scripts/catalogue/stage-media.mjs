@@ -6,10 +6,8 @@
 //                                                                        Android package: larger animations
 //   VITE_CLIP_EXT=webp APP_MEDIA_DIR=/private/app-webp ...              ... as animated WebP (the release)
 //
-// The media are licensed from Gym visual for openGym only (catalogue/media/NOTICE.md). 180 px is
-// what may sit in the repository, a website or a self-hosted server; anything larger may only
-// ever end up inside a compiled app package, so APP_MEDIA_DIR is set by the release build alone
-// and points at the maintainer's private copy, never at anything in this repository.
+// Stages the exercise media files alongside the built app. The repository's catalogue is the
+// source of truth for the stills and animations; the build does not copy a separate media notice.
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -37,5 +35,4 @@ const copyDir = (from, to, ext) => {
 const dest = path.join(out, 'exercise-media')
 const stills = copyDir(path.join(media, 'still'), path.join(dest, 'still'), '.webp')
 const clips = copyDir(appDir || path.join(media, 'clip'), path.join(dest, 'clip'), clipExt)
-fs.copyFileSync(path.join(media, 'NOTICE.md'), path.join(dest, 'NOTICE.md'))
 console.log(`media: ${stills} stills, ${clips} animations${appDir ? ' (app size)' : ''} -> ${path.relative(ROOT, out) || out}`)
