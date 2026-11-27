@@ -32,23 +32,24 @@ const copyDir = (from, to, ext) => {
   }
   return n
 }
+
 const dest = path.join(out, 'exercise-media')
 const stills = copyDir(path.join(media, 'still'), path.join(dest, 'still'), '.webp')
 const clips = copyDir(appDir || path.join(media, 'clip'), path.join(dest, 'clip'), clipExt)
 
 // Fail the deployment if even one catalogue drawing is missing its still or animation.
 // The catalogue contains both canonical exercises and figure variants; each JSON record has
-// its own media ID, so this checks the complete 6,554-file-per-format set, not only EXDB rows.
+// its own media ID, so this checks the complete set, not only the canonical EXDB rows.
 try {
   const catalogueDir = path.join(ROOT, 'catalogue/exercises')
-  const records = fs.readdirSync(catalogueDir).filter(name => /^\\d+\\.json$/.test(name))
+  const records = fs.readdirSync(catalogueDir).filter(name => /^\d+\.json$/.test(name))
   if (!records.length) throw new Error('No exercise JSON records found in catalogue/exercises.')
 
   const ids = new Set()
   const missing = []
   for (const file of records) {
     const record = JSON.parse(fs.readFileSync(path.join(catalogueDir, file), 'utf8'))
-    const id = String(record.id || file.replace(/\\.json$/, '')).padStart(4, '0')
+    const id = String(record.id || file.replace(/\.json$/, '')).padStart(4, '0')
     if (ids.has(id)) throw new Error('Duplicate exercise media ID: ' + id)
     ids.add(id)
 
@@ -75,4 +76,4 @@ try {
   process.exit(1)
 }
 
-console.log(`media: ${stills} stills, ${clips} animations${appDir ? ' (app size)' : ''} -> ${path.relative(ROOT, out) || out}`)
+console.log(\`media: \${stills} stills, \${clips} animations\${appDir ? ' (app size)' : ''} -> \${path.relative(ROOT, out) || out}\`)
