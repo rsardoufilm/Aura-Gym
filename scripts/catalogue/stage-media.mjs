@@ -35,4 +35,44 @@ const copyDir = (from, to, ext) => {
 const dest = path.join(out, 'exercise-media')
 const stills = copyDir(path.join(media, 'still'), path.join(dest, 'still'), '.webp')
 const clips = copyDir(appDir || path.join(media, 'clip'), path.join(dest, 'clip'), clipExt)
+
+// Fail the deployment if even one catalogue drawing is missing its still or animation.
+// The catalogue contains both canonical exercises and figure variants; each JSON record has
+// its own media ID, so this checks the complete 6,554-file-per-format set, not only EXDB rows.
+try {
+  const catalogueDir = path.join(ROOT, 'catalogue/exercises')
+  const records = fs.readdirSync(catalogueDir).filter(name => /^\\d+\\.json$/.test(name))
+  if (!records.length) throw new Error('No exercise JSON records found in catalogue/exercises.')
+
+  const ids = new Set()
+  const missing = []
+  for (const file of records) {
+    const record = JSON.parse(fs.readFileSync(path.join(catalogueDir, file), 'utf8'))
+    const id = String(record.id || file.replace(/\\.json$/, '')).padStart(4, '0')
+    if (ids.has(id)) throw new Error('Duplicate exercise media ID: ' + id)
+    ids.add(id)
+
+    for (const [folder, ext] of [['still', '.webp'], ['clip', clipExt]]) {
+      const target = path.join(dest, folder, id + ext)
+      if (!fs.existsSync(target)) {
+        missing.push(folder + '/' + id + ext)
+        continue
+      }
+      const stat = fs.statSync(target)
+      if (!stat.isFile() || stat.size <= 0) missing.push(folder + '/' + id + ext + ' (empty or invalid)')
+    }
+  }
+
+  if (missing.length) {
+    throw new Error(missing.length + ' missing/invalid media files. First 30: ' + missing.slice(0, 30).join(', '))
+  }
+  if (stills !== records.length || clips !== records.length) {
+    throw new Error('Media count mismatch: ' + records.length + ' catalogue records, ' + stills + ' stills, ' + clips + ' animations.')
+  }
+  console.log('media verification: OK — ' + records.length.toLocaleString('en-US') + ' catalogue records, all stills and animations present.')
+} catch (error) {
+  console.error('[stage-media] Verification failed:', error instanceof Error ? error.message : String(error))
+  process.exit(1)
+}
+
 console.log(`media: ${stills} stills, ${clips} animations${appDir ? ' (app size)' : ''} -> ${path.relative(ROOT, out) || out}`)
