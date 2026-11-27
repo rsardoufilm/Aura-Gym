@@ -1114,7 +1114,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
           release is newer (checksum verified, see onUpdateRowClick). On the web the app updates
           with its server, so the row points at the APK for the phone instead. iOS and the Google
           Play build are updated by their store. */}
-      <Section footer={MOBILE ? (selfUpdate ? t('Releases are checked on GitHub. The download is verified against its checksum before the installer opens.') : fdroid ? t('F-Droid installs the updates for this build.') : null) : t('The web app updates together with your server. The Android app installs its own updates from here.')}>
+      <Section footer={MOBILE ? (selfUpdate ? t('Releases are checked on GitHub. The download is verified against its checksum before the installer opens.') : fdroid ? t('F-Droid installs the updates for this build.') : null) : t('The web app updates together with your server. Android APKs are produced with a native Capacitor build; this web preview does not download APKs.')}>
         {/* The sideloaded APK comes in three kinds that differ only in the animations built in
             (lib/apk-variant.js): which one this is, so nobody has to guess from the file size. */}
         <Row icon="info" iconTint="var(--grey)" title={t('Version')} value={'v' + __APP_VERSION__}
@@ -1125,9 +1125,8 @@ export default function Settings({ page = null, find = null, via = null, entryKe
               subtitle={checking ? t('Checking…') : t('You have v{0}', __APP_VERSION__)}
               accessory="chevron"
               onClick={() => (updateInfo?.hasUpdate ? onUpdateRowClick() : checkNow())} />
-          : <Row icon="download" iconTint="var(--green)" title={t('Get the Android app')}
-              subtitle={t('Download the APK from auragym')} accessory="chevron"
-              onClick={() => window.open('https://auragym/#download', '_blank', 'noopener')} />}
+          : <Row icon="info" iconTint="var(--grey)" title={t('Android APK (native build)')}
+              subtitle={t('Generate the Android APK with a native Capacitor build. The web preview does not provide an APK download.')} />}
       </Section>
       {/* The F-Droid build has no Wear OS link (it would need Google Play services, which F-Droid
           leaves out): said here rather than having a watch that silently never connects. */}
@@ -1172,7 +1171,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
       {!MOBILE && !standalone() && <Section title={t('Tip')}>
         <Row icon="share" iconTint="var(--blue)"
           title={IS_ANDROID ? t('In Chrome: ⋮ menu → Add to Home screen') : APPLE_UA ? t('In Safari: Share → Add to Home Screen') : t('In Chrome or Edge: the install icon in the address bar')}
-          subtitle={t('to install Aura Gym as a full-screen app.') + ' ' + (user ? t('Your data syncs with your profile. Sign in anywhere and it’s there.') : t('Guest data stays on this device, so export a backup now and then!'))} />
+          subtitle={t('Install Aura Gym on your home screen from the browser menu.') + ' ' + (user ? t('Your data syncs with your profile. Sign in anywhere and it’s there.') : t('Guest data stays on this device, so export a backup now and then!'))} />
       </Section>}
       {/* The version, where the support template tells people to look for it. On the phone
           build there is no address bar and no about box, so without this there is no way to tell
