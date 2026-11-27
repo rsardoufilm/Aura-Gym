@@ -76,4 +76,4 @@ try {
   process.exit(1)
 }
 
-console.log(\`media: \${stills} stills, \${clips} animations\${appDir ? ' (app size)' : ''} -> \${path.relative(ROOT, out) || out}\`)
+console.log('media: ' + stills + ' stills, ' + clips + ' animations' + (appDir ? ' (app size)' : '') + ' -> ' + (path.relative(ROOT, out) || out))
